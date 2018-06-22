@@ -13,7 +13,7 @@ This library is still work-in-progress. Any suggestions or issue reports are wel
 
 ## Examples
 ### Setup your model
-Comform to both FirestoreCollection and SnapshotCodable Protocols, and provide your collection name as defined in your Firestore console. Implement the key as constant because it is internally handled by Firestore and should be read-only.
+Conform to both FirestoreCollection and SnapshotCodable Protocols, and provide your collection name as defined in your Firestore console. Implement the key as constant because it is internally handled by Firestore and should be read-only.
 
 ```swift
 struct Users: FirestoreCollection, SnapshotCodable {
