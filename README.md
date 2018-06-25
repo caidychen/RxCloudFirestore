@@ -81,12 +81,39 @@ GoogleFirestore.firestore().rx
 ```
 
 ### Observe a subcollection of courses from a speicfic school
-We use special operators *~>* and *~>>* to "navigate" through subcollections.
-- Return a specific document from a subcollection from its parent document: 
+We use special operators **~>** and **~>>** to "navigate" through subcollections and build the full path automatically.
 ```swift
-    School.documentPath(key: "SchoolID") ~>> Course.documentPath(key: "CourseID")
+// Return a specific document from a subcollection from its parent document
+   let coursePath = School.documentPath(key: "SchoolID") ~> Course.documentPath(key: "CourseID")
+   GoogleFirestore.firestore().rx
+    .observe(coursePath, Course.self)
+    .subscribe(onNext: {course in
+        print(course)
+    })
+    .disposed(by: disposeBag)
 ```
-- Return an entire subcollection from its parent document:
+
 ```swift
-    School.documentPath(key: "SchoolID") ~> Course.collectionPath()
+// Return an entire subcollection from its parent document
+    let courseCollectionPath = School.documentPath(key: "SchoolID") ~>> Course.collectionPath()
+    GoogleFirestore.firestore().rx
+    .observe(courseCollectionPath, Course.self)
+    .subscribe(onNext: { allCourses in
+        allCourses.forEach({ course in
+            print(course)     
+        })
+    })
+    .disposed(by: disposeBag)
+```
+
+You can of course chain the navigation however you like:
+```swift
+// Although I personally don't like the idea of having too many subcollections in Firestore, I will 
+// still demonstrate the full capability of this library for educational purposes.
+
+let schoolPath = School.documentPath(key: "SchoolID") 
+let coursePath = Course.documentPath(key: "CourseID")
+let studentPath = Student.documentPath(key: "StudentID")
+let allReportPath = AcademicReport.collectionPath()
+let combinedPath = (schoolPath ~> coursePath ~> studentPath) ~>> allReportPath
 ```
