@@ -12,18 +12,15 @@ This library is still work-in-progress. Any suggestions or issue reports are wel
 - [x] Get a single event for setting an item.
 
 ## Examples
-We are designing a database for a collection of schools that have subcollections of courses, and these courses have subcollections of trainings. 
+We are designing a database for a collection of schools that have subcollections of courses.
 ### Firestore database schema
-```JSON
-Schools <collection>{
-    name: <String>,
-    Courses <collection> {
-        name: <String>,     
-        startDate: <Int>             // Timestamp
-        endDate: <Int> 
-        Trainings <collection> {
-            date: <Int>         // Timestamp
-        }
+```XML
+schools <> {
+    name: "",
+    courses <> {
+        name: "",     
+        startDate: 0,    // Timestamp
+        endDate: 0,      // Timestamp
     }
 }
 ```  
@@ -34,14 +31,22 @@ Conform to both FirestoreCollection & SnapshotCodable Protocols, and implement 2
 2. Implement the key as constant because it is internally handled by Firestore and should be read-only.
 
 ```swift
-struct Users: FirestoreCollection, SnapshotCodable {
+struct School: FirestoreCollection, SnapshotCodable {
 
-    static let collectionName = "users"  // 1
+    static let collectionName = "schools"  // 1
     let key: String                      // 2
     
-    var firstName: String
-    var lastName: String
-    var age: Int
-    
+    var name: String
 }
+
+struct Course: FirestoreCollection, SnapshotCodable {
+
+    static let collectionName = "courses"  // 1
+    let key: String                      // 2
+    
+    var name: String
+    var startDate: Int
+    var endDate: Int
+}
+
 ```
