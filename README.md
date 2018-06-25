@@ -64,8 +64,18 @@ GoogleFirestore.firestore().rx
     .observe(School.collectionPath(), School.self)
     .subscribe(onNext: { allSchools in
         allSchools.forEach({ school in
-            // do something     
+            print(school)     
         })
+    })
+    .disposed(by: disposeBag)
+```
+### Observe a specific school 
+```swift
+let key = "FirebaseKey"
+GoogleFirestore.firestore().rx
+    .observe(School.documentPath(key: key), School.self)
+    .subscribe(onNext: {school in
+        print(school)
     })
     .disposed(by: disposeBag)
 ```
