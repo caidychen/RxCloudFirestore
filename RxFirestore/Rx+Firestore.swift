@@ -15,7 +15,7 @@ extension Reactive where Base: Firestore {
     /**
      Get a single event for a collection of documents.
      */
-    func get<T: SnapshotCodable>(_ collectionPath: TypedCollectionPath<T>) -> Single<[T?]> {
+    func get<T: SnapshotCodable>(_ collectionPath: TypedCollectionPath<T>) -> Single<[T]> {
         return Single.create{observer in
             collectionPath.0.getDocuments(source: .cache, completion: { (snapshot, error) in
                 guard let snapshot = snapshot?.documents else {
@@ -24,7 +24,7 @@ extension Reactive where Base: Firestore {
                     }
                     return
                 }
-                observer(.success(snapshot.map{T.createFromDictionary($0.data(), key: $0.documentID)}))
+                observer(.success(snapshot.compactMap{T.createFromDictionary($0.data(), key: $0.documentID)}))
             })
             return Disposables.create()
         }
@@ -51,7 +51,7 @@ extension Reactive where Base: Firestore {
     /**
      Observe a stream of events for a collection of documents.
      */
-    func observe<T: SnapshotCodable>(_ collectionPath: TypedCollectionPath<T>) -> Observable<[T?]> {
+    func observe<T: SnapshotCodable>(_ collectionPath: TypedCollectionPath<T>) -> Observable<[T]> {
         return Observable<[DocumentSnapshot]>.create({ observer in
             let handler = collectionPath.0.addSnapshotListener {(snapshot, error) in
                 guard let snapshot = snapshot?.documents else {
@@ -66,7 +66,7 @@ extension Reactive where Base: Firestore {
                 handler.remove()
             }
         }).map({ (snapshotList) in
-            return snapshotList.map{T.createFromDictionary($0.data(), key: $0.documentID)}
+            return snapshotList.compactMap{T.createFromDictionary($0.data(), key: $0.documentID)}
         })
     }
     
@@ -96,7 +96,7 @@ extension Reactive where Base: Firestore {
     func update<T: FirestoreCollection & SnapshotCodable>(_ item: T) -> Single<()>? {
         guard let dic = item.JSONDictionary else {return nil}
         return Single.create{observer in
-            T.documentPath(T.self, key: item.key).0.updateData(dic) { error in
+            T.documentPath(typed: T.self, key: item.key).0.updateData(dic) { error in
                 if let error = error {
                     observer(.error(error))
                 } else {
@@ -113,7 +113,7 @@ extension Reactive where Base: Firestore {
     func set<T: FirestoreCollection & SnapshotCodable>(_ item: T) -> Single<()>? {
         guard let dic = item.JSONDictionary else {return nil}
         return Single.create{observer in
-            T.documentPath(T.self, key: item.key).0.setData(dic) { error in
+            T.documentPath(typed: T.self, key: item.key).0.setData(dic) { error in
                 if let error = error {
                     observer(.error(error))
                 } else {

@@ -9,6 +9,7 @@
 import FirebaseCore
 import FirebaseFirestore
 
+typealias GoogleFirestore = Firestore // Use this alias if you don't want to import Firebase everywhere
 typealias TypedCollectionPath <T: SnapshotCodable>   = (CollectionReference, T.Type)
 typealias TypedDocumentPath <T: SnapshotCodable>     = (DocumentReference, T.Type)
 
@@ -25,32 +26,47 @@ protocol FirestoreCollection {
      */
     static var collectionName: String { get }
     
-    static func collectionPath<T: SnapshotCodable>(_ type: T.Type) -> TypedCollectionPath<T>
-    static func documentPath<T: SnapshotCodable>(_ type: T.Type, key: String) -> TypedDocumentPath<T>
-    func getDocument<T: SnapshotCodable>(_ type: T.Type) -> TypedDocumentPath<T>
+    static func collectionPath<T: SnapshotCodable>(typed type: T.Type) -> TypedCollectionPath<T>
+    static func collectionPath() -> CollectionReference
+    static func documentPath<T: SnapshotCodable>(typed type: T.Type, key: String) -> TypedDocumentPath<T>
+    static func documentPath(key: String) -> DocumentReference
+    func getDocument<T: SnapshotCodable>(typed type: T.Type) -> TypedDocumentPath<T>
 }
 
 extension FirestoreCollection {
+
     /**
      Returns a tuple of a CollectionReference and an associated model type
      */
-    static func collectionPath<T: SnapshotCodable>(_ type: T.Type) -> TypedCollectionPath<T> {
+    static func collectionPath<T: SnapshotCodable>(typed type: T.Type) -> TypedCollectionPath<T> {
         return (Firestore.firestore().collection(collectionName), type)
+    }
+    
+    static func collectionPath() -> CollectionReference {
+        return Firestore.firestore().collection(collectionName)
     }
     
     /**
      Returns a tuple of a DocumentReference (given a document ID in this collection) and an associated model type
      */
-    static func documentPath<T: SnapshotCodable>(_ type: T.Type, key: String) -> TypedDocumentPath<T> {
+    static func documentPath<T: SnapshotCodable>(typed type: T.Type, key: String) -> TypedDocumentPath<T> {
         return  key.isEmpty ?
-                (Self.collectionPath(type).0.document(), type) :
-                (Self.collectionPath(type).0.document(key), type)
+                (Self.collectionPath(typed: type).0.document(), type) :
+                (Self.collectionPath(typed: type).0.document(key), type)
+    }
+    
+    static func documentPath(key: String) -> DocumentReference {
+        return key.isEmpty ?
+            Self.collectionPath().document():
+            Self.collectionPath().document(key)
     }
     
     /**
      Returns a tuple of a DocumentReference (from self) and an associated model type
      */
-    func getDocument<T: SnapshotCodable>(_ type: T.Type) -> TypedDocumentPath<T> {
-        return Self.documentPath(type, key: key)
+    func getDocument<T: SnapshotCodable>(typed type: T.Type) -> TypedDocumentPath<T> {
+        return Self.documentPath(typed: type, key: key)
     }
+    
 }
+
