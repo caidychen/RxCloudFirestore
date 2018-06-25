@@ -14,6 +14,7 @@ This library is still work-in-progress. Any suggestions or issue reports are wel
 ## Examples
 We are designing a database for a collection of schools that have subcollections of courses, and these courses have subcollections of trainings. 
 ### Firestore database schema
+```JSON
 Schools <collection>{
     name: <String>,
     Courses <collection> {
@@ -25,7 +26,7 @@ Schools <collection>{
         }
     }
 }
-    
+```  
 
 ### Setup your model
 Conform to both FirestoreCollection & SnapshotCodable Protocols, and implement 2 things as below:
