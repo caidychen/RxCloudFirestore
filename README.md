@@ -60,10 +60,10 @@ struct Course: FirestoreCollection, SnapshotCodable {
 
 ### Observe a collection of schools
 ```swift
-Firestore.firestore().rx
-    .observe(School.collectionPath(typed: School.self))
-    .subscribe(onNext: { (allSchools) in
-        allSchools.forEach({ (school) in
+GoogleFirestore.firestore().rx
+    .observe(School.collectionPath(), School.self)
+    .subscribe(onNext: { allSchools in
+        allSchools.forEach({ school in
             // do something     
         })
     })
