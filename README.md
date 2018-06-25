@@ -1,6 +1,5 @@
 # RxCloudFirestore
-
-RxCloudFirestore is an Rx wrapper around iOS Firestore API that works seamlessly with Codable Protocol in Swift 4.0. The aim of making this library is to improve the developer experience of Google Firestore for those who are already familiar with RxSwift Frameworks.
+RxCloudFirestore is an RxSwift wrapper around iOS Firestore API that works seamlessly with Codable Protocol in Swift 4.0. 
 
 #### Please note
 This library is still work-in-progress. Any suggestions or issue reports are welcomed!
@@ -11,9 +10,17 @@ This library is still work-in-progress. Any suggestions or issue reports are wel
 - [x] Get a single event for updating an item.
 - [x] Get a single event for setting an item.
 
+## Requirements
+- Swift 4.0
+- Google Firestore (https://firebase.google.com/docs/firestore/)
+- RxSwift (https://github.com/ReactiveX/RxSwift)
+
 ## Examples
-We are designing a database for a collection of schools that have subcollections of courses.
+Let's start off by defining a simple data structure. 
+Assuming we are designing a database for a collection of schools that have subcollections of courses:
 ### Firestore database schema
+#### Please note
+I will use <>{...} to annotate a collection type followed by a collection name (plural).
 ```XML
 schools <> {
     name: "",
