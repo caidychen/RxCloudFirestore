@@ -15,9 +15,9 @@ extension Reactive where Base: Firestore {
     /**
      Get a single event for a collection of documents.
      */
-    func get<T: SnapshotCodable>(_ collectionPath: TypedCollectionPath<T>) -> Single<[T]> {
+    func get<T: SnapshotCodable>(_ collectionPath: CollectionReference, _ type: T.Type) -> Single<[T]> {
         return Single.create{observer in
-            collectionPath.0.getDocuments(source: .cache, completion: { (snapshot, error) in
+            collectionPath.getDocuments(source: .cache, completion: { (snapshot, error) in
                 guard let snapshot = snapshot?.documents else {
                     if let error = error {
                         observer(.error(error))
@@ -33,9 +33,9 @@ extension Reactive where Base: Firestore {
     /**
      Get a single event for a single document.
      */
-    func get<T: SnapshotCodable>(_ documentPath: TypedDocumentPath<T>) -> Single<T?> {
+    func get<T: SnapshotCodable>(_ documentPath: DocumentReference, _ type: T.Type) -> Single<T?> {
         return Single.create{observer in
-            documentPath.0.getDocument(source: .cache, completion: { (snapshot, error) in
+            documentPath.getDocument(source: .cache, completion: { (snapshot, error) in
                 guard let snapshot = snapshot else {
                     if let error = error {
                         observer(.error(error))
@@ -51,9 +51,9 @@ extension Reactive where Base: Firestore {
     /**
      Observe a stream of events for a collection of documents.
      */
-    func observe<T: SnapshotCodable>(_ collectionPath: TypedCollectionPath<T>) -> Observable<[T]> {
+    func observe<T: SnapshotCodable>(_ collectionPath: CollectionReference, _ type: T.Type) -> Observable<[T]> {
         return Observable<[DocumentSnapshot]>.create({ observer in
-            let handler = collectionPath.0.addSnapshotListener {(snapshot, error) in
+            let handler = collectionPath.addSnapshotListener {(snapshot, error) in
                 guard let snapshot = snapshot?.documents else {
                     if let error = error {
                         observer.onError(error)
@@ -73,9 +73,9 @@ extension Reactive where Base: Firestore {
     /**
      Observe a stream of events for a single document.
      */
-    func observe<T: SnapshotCodable>(_ documentPath: TypedDocumentPath<T>) -> Observable<T?> {
+    func observe<T: SnapshotCodable>(_ documentPath: DocumentReference, _ type: T.Type) -> Observable<T?> {
         return Observable<DocumentSnapshot>.create({ observer in
-            let handler = documentPath.0.addSnapshotListener {(snapshot, error) in
+            let handler = documentPath.addSnapshotListener {(snapshot, error) in
                 guard let snapshot = snapshot else {
                     if let error = error {
                         observer.onError(error)
@@ -96,7 +96,7 @@ extension Reactive where Base: Firestore {
     func update<T: FirestoreCollection & SnapshotCodable>(_ item: T) -> Single<()>? {
         guard let dic = item.JSONDictionary else {return nil}
         return Single.create{observer in
-            T.documentPath(typed: T.self, key: item.key).0.updateData(dic) { error in
+            T.documentPath(key: item.key).updateData(dic) { error in
                 if let error = error {
                     observer(.error(error))
                 } else {
@@ -113,7 +113,7 @@ extension Reactive where Base: Firestore {
     func set<T: FirestoreCollection & SnapshotCodable>(_ item: T) -> Single<()>? {
         guard let dic = item.JSONDictionary else {return nil}
         return Single.create{observer in
-            T.documentPath(typed: T.self, key: item.key).0.setData(dic) { error in
+            T.documentPath(key: item.key).setData(dic) { error in
                 if let error = error {
                     observer(.error(error))
                 } else {
