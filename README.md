@@ -21,6 +21,7 @@ Assuming we are designing a database for a collection of schools that have subco
 ### Firestore database schema
 We will use <>{...} to annotate a collection type followed by a collection name.
 ```XML
+
 schools <> {
     name: "",
     courses <> {
@@ -29,6 +30,7 @@ schools <> {
         endDate: 0,      // Timestamp
     }
 }
+
 ```  
 
 ### Setup your model
@@ -37,6 +39,7 @@ Conform to both FirestoreCollection & SnapshotCodable Protocols, and implement 2
 2. Implement the key as constant because it is internally handled by Firestore and should be read-only.
 
 ```swift
+
 struct School: FirestoreCollection, SnapshotCodable {
 
     static let collectionName = "schools"  // 1
@@ -59,6 +62,7 @@ struct Course: FirestoreCollection, SnapshotCodable {
 
 ### Observe a collection of schools
 ```swift
+
 GoogleFirestore.firestore().rx
     .observe(School.collectionPath(), School.self)
     .subscribe(onNext: { allSchools in
@@ -67,24 +71,30 @@ GoogleFirestore.firestore().rx
         })
     })
     .disposed(by: disposeBag)
+    
 ```
 
 ### Observe a specific school 
 ```swift
+
 let key = "FirebaseID"
+
 GoogleFirestore.firestore().rx
     .observe(School.documentPath(key: key), School.self)
     .subscribe(onNext: {school in
         print(school)
     })
     .disposed(by: disposeBag)
+    
 ```
 
 ### Observe a subcollection of courses from a speicfic school
 We use special operators **~>** and **~>>** to "navigate" through subcollections and build the full path automatically.
 ```swift
+
 // Return a specific document from a subcollection from its parent document
    let coursePath = School.documentPath(key: "SchoolID") ~> Course.documentPath(key: "CourseID")
+   
    GoogleFirestore.firestore().rx
     .observe(coursePath, Course.self)
     .subscribe(onNext: {course in
@@ -94,8 +104,10 @@ We use special operators **~>** and **~>>** to "navigate" through subcollections
 ```
 
 ```swift
+
 // Return an entire subcollection from its parent document
     let courseCollectionPath = School.documentPath(key: "SchoolID") ~>> Course.collectionPath()
+    
     GoogleFirestore.firestore().rx
     .observe(courseCollectionPath, Course.self)
     .subscribe(onNext: { allCourses in
@@ -104,10 +116,12 @@ We use special operators **~>** and **~>>** to "navigate" through subcollections
         })
     })
     .disposed(by: disposeBag)
+    
 ```
 
 You can of course chain the navigation however you like:
 ```swift
+
 // Although I personally don't like the idea of having too many subcollections in Firestore, I will 
 // still demonstrate the full capability of this library for educational purposes.
 
@@ -115,5 +129,7 @@ let schoolPath = School.documentPath(key: "SchoolID")
 let coursePath = Course.documentPath(key: "CourseID")
 let studentPath = Student.documentPath(key: "StudentID")
 let allReportPath = AcademicReport.collectionPath()
+
 let combinedPath = (schoolPath ~> coursePath ~> studentPath) ~>> allReportPath
+
 ```
