@@ -19,8 +19,7 @@ This library is still work-in-progress. Any suggestions or issue reports are wel
 Let's start off by defining a simple data structure. 
 Assuming we are designing a database for a collection of schools that have subcollections of courses:
 ### Firestore database schema
-#### Please note
-I will use <>{...} to annotate a collection type followed by a collection name (plural).
+We will use <>{...} to annotate a collection type followed by a collection name.
 ```XML
 schools <> {
     name: "",
@@ -69,13 +68,25 @@ GoogleFirestore.firestore().rx
     })
     .disposed(by: disposeBag)
 ```
+
 ### Observe a specific school 
 ```swift
-let key = "FirebaseKey"
+let key = "FirebaseID"
 GoogleFirestore.firestore().rx
     .observe(School.documentPath(key: key), School.self)
     .subscribe(onNext: {school in
         print(school)
     })
     .disposed(by: disposeBag)
+```
+
+### Observe a subcollection of courses from a speicfic school
+We use special operators *~>* and *~>>* to "navigate" through subcollections.
+- Return a specific document from a subcollection from its parent document: 
+```swift
+    School.documentPath(key: "SchoolID") ~>> Course.documentPath(key: "CourseID")
+```
+- Return an entire subcollection from its parent document:
+```swift
+    School.documentPath(key: "SchoolID") ~> Course.collectionPath()
 ```
