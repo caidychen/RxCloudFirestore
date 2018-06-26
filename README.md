@@ -101,7 +101,7 @@ GoogleFirestore.firestore().rx
     
 ```
 
-### Query a subcollection of courses from a speicfic school
+### Query a subcollection of courses from a specific school
 Chain your collection path and document path together like an **alternating pattern** to "navigate" through subcollections: 
 *Collection(odd) -> Document(even) -> Collection(odd)*
 
