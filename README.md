@@ -73,6 +73,19 @@ GoogleFirestore.firestore().rx
     .disposed(by: disposeBag)
     
 ```
+If you want to combine the path with a query, just append Firestore query functions as usual: 
+```swift
+
+GoogleFirestore.firestore().rx
+    .observe(School.collection().whereField("name", isEqualTo: "MIT"), School.self)
+    .subscribe(onNext: { allSchools in
+        allSchools.forEach({ school in
+            print(school)     
+        })
+    })
+    .disposed(by: disposeBag)
+    
+```
 
 ### Observe a specific school 
 ```swift
@@ -96,7 +109,7 @@ Chain your collection path and document path together like an **alternating patt
 
 // Return a specific document from a subcollection from its parent document
    
-   GoogleFirestore.firestore().rx
+GoogleFirestore.firestore().rx
     .observe(
         School.collection()
               .document(key: "SchoolID")
@@ -114,7 +127,7 @@ Chain your collection path and document path together like an **alternating patt
 
 // Return an entire subcollection from its parent document
     
-    GoogleFirestore.firestore().rx
+GoogleFirestore.firestore().rx
     .observe(
         School.collection()
               .document(key: "SchoolID")
