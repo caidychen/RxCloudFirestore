@@ -34,7 +34,7 @@ schools <> {
 ```  
 
 ### Setup your model
-Conform to both FirestoreCollection & SnapshotCodable Protocols, and implement 2 things as below:
+Conform to both **FirestoreCollection** & **SnapshotCodable** Protocols, and implement 2 things as below:
 1. Supply your collection name as defined in your Firestore console (If it is a subcollection, just use the name of the subcollection and ignore the whole path. We will get into building full subcollection path later). 
 2. Implement the key as constant because it is internally handled by Firestore and should be read-only.
 
