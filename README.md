@@ -19,7 +19,7 @@ This library is still work-in-progress. Any suggestions or issue reports are wel
 Let's start off by defining a simple data structure. 
 Assuming we are designing a database for a collection of schools that have subcollections of courses:
 ### Firestore database schema
-We will use <>{...} to annotate a collection type followed by a collection name.
+We will use <>{...} to annotate a collection type that follows a collection name.
 ```XML
 
 schools <> {
