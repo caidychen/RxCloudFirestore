@@ -144,4 +144,4 @@ GoogleFirestore.firestore().rx
 ```
 
 ### Important Notes
-- All Firestore callbacks happen in their own threads (not the main thread). So if your subscriber needs to perform tasks on the main thread, make sure you **observeOn(MainScheduler.instance)**
+- All Firestore callbacks happen in their own threads (not the main thread). So if your observer needs to perform tasks on the main thread, make sure you **observeOn(MainScheduler.instance)**
