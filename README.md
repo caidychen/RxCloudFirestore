@@ -144,4 +144,5 @@ GoogleFirestore.firestore().rx
 ```
 
 ### Important Notes
-- All Firestore callbacks happen in their own threads (not the main thread). So if your observer needs to perform tasks on the main thread, make sure you **observeOn(MainScheduler.instance)**
+- All Firestore callbacks happen on their own threads (not the main thread). So if your observer needs to perform tasks on the main thread, make sure you **observeOn(MainScheduler.instance)**
+- If your model has a child object, that child also needs to conform SnapshotCodable (but does not need to conform FirestoreCollection since it is not a collection type).
