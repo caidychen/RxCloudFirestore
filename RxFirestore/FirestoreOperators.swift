@@ -9,15 +9,16 @@
 import FirebaseCore
 import FirebaseFirestore
 
-infix operator ~> : AdditionPrecedence
-infix operator ~>> : AdditionPrecedence
-
-func ~> (lhs: DocumentReference, rhs: DocumentReference) -> DocumentReference{
-    let newPath = lhs.path + "/" + rhs.path
-    return Firestore.firestore().document(newPath)
+extension CollectionReference {
+    func document(key: String) -> DocumentReference {
+        let newPath = self.path + "/" + key
+        return Firestore.firestore().document(newPath)
+    }
 }
 
-func ~>> (lhs: DocumentReference, rhs: CollectionReference) -> CollectionReference{
-    let newPath = lhs.path + "/" + rhs.path
-    return Firestore.firestore().collection(newPath)
+extension DocumentReference {
+    func subcollection(_ name: FirestoreCollection.Type) -> CollectionReference {
+        let newPath = self.path + "/" + name.collectionName
+        return Firestore.firestore().collection(newPath)
+    }
 }

@@ -23,20 +23,20 @@ protocol FirestoreCollection {
      The collection name as defined in firesotre console
      */
     static var collectionName: String { get }
-    static func collectionPath() -> CollectionReference
+    static func collection() -> CollectionReference
 
-    static func documentPath(key: String) -> DocumentReference
+    static func document(key: String) -> DocumentReference
 }
 
 extension FirestoreCollection {
-    static func collectionPath() -> CollectionReference {
+    static func collection() -> CollectionReference {
         return Firestore.firestore().collection(collectionName)
     }
 
-    static func documentPath(key: String) -> DocumentReference {
+    static func document(key: String) -> DocumentReference {
         return key.isEmpty ?
-            Self.collectionPath().document():
-            Self.collectionPath().document(key)
+            Self.collection().document():
+            Self.collection().document(key)
     }
 }
 
