@@ -17,7 +17,7 @@ extension Reactive where Base: Firestore {
      */
     func get<T: SnapshotCodable>(_ collectionPath: Query, _ type: T.Type) -> Single<[T]> {
         return Single.create{observer in
-            collectionPath.getDocuments(source: .cache, completion: { (snapshot, error) in
+            collectionPath.getDocuments(source: .default, completion: { (snapshot, error) in
                 guard let snapshot = snapshot?.documents else {
                     if let error = error {
                         observer(.error(error))
@@ -35,7 +35,7 @@ extension Reactive where Base: Firestore {
      */
     func get<T: SnapshotCodable>(_ documentPath: DocumentReference, _ type: T.Type) -> Single<T?> {
         return Single.create{observer in
-            documentPath.getDocument(source: .cache, completion: { (snapshot, error) in
+            documentPath.getDocument(source: .default, completion: { (snapshot, error) in
                 guard let snapshot = snapshot else {
                     if let error = error {
                         observer(.error(error))
@@ -51,7 +51,7 @@ extension Reactive where Base: Firestore {
     /**
      Observe a stream of events for a collection of documents.
      */
-    func observe<T: SnapshotCodable>(_ collectionPath: CollectionReference, _ type: T.Type) -> Observable<[T]> {
+    func observe<T: SnapshotCodable>(_ collectionPath: Query, _ type: T.Type) -> Observable<[T]> {
         return Observable<[DocumentSnapshot]>.create({ observer in
             let handler = collectionPath.addSnapshotListener {(snapshot, error) in
                 guard let snapshot = snapshot?.documents else {
@@ -114,6 +114,22 @@ extension Reactive where Base: Firestore {
         guard let dic = item.JSONDictionary else {return nil}
         return Single.create{observer in
             T.document(key: item.key).setData(dic) { error in
+                if let error = error {
+                    observer(.error(error))
+                } else {
+                    observer(.success(()))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+    
+    /**
+     Get a single event for deleting an item.
+     */
+    func delete<T: FirestoreCollection & SnapshotCodable>(_ item: T) -> Single<()>? {
+        return Single.create{observer in
+            T.document(key: item.key).delete() { error in
                 if let error = error {
                     observer(.error(error))
                 } else {
